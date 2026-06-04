@@ -1,5 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 
+"x-api-key": import.meta.env.VITE_ANTHROPIC_API_KEY,
+
 const SYSTEM_PROMPT = `Tu es Klea, l'assistante RH de Proelan, une ESN (Entreprise de Services du Numérique). Tu as été développée par Agnès, la DRH de Proelan, pour répondre aux questions RH du quotidien de tous les collaborateurs — nouveaux ou non. Tu es disponible à tout moment pour simplifier la vie de chacun.
 
 ## Informations sur Proelan
