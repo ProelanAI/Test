@@ -249,11 +249,11 @@ export default function OnboardingAgent() {
     setStarted(true);
     setLoading(true);
     try {
-      const response = await fetch("https://api.anthropic.com/v1/messages", {
+      const response = await fetch(("/api/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          model: "claude-sonnet-4-20250514",
+          model: "claude-sonnet-4-5",
           max_tokens: 1000,
           system: SYSTEM_PROMPT,
           messages: [{ role: "user", content: "Bonjour, je suis nouveau ici." }],
@@ -288,11 +288,11 @@ export default function OnboardingAgent() {
         .filter((m) => !m.hidden)
         .map((m) => ({ role: m.role, content: m.content }));
 
-      const response = await fetch("https://api.anthropic.com/v1/messages", {
+      const response = await fetch(("/api/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          model: "claude-sonnet-4-20250514",
+          model: "claude-sonnet-4-5",
           max_tokens: 1000,
           system: SYSTEM_PROMPT,
           messages: apiMessages,
