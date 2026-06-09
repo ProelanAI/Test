@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 
 const PASSWORD = "motdepasse123"; // ou via import.meta.env.VITE_APP_PASSWORD
 
@@ -33,7 +33,7 @@ export default function App() {
 }
 
 
-import { useState, useEffect, useRef } from "react";
+
 
 const SYSTEM_PROMPT = `Tu es Klea, l'assistante RH de Proelan, une ESN (Entreprise de Services du Numérique). Tu as été développée par Agnès, la DRH de Proelan, pour répondre aux questions RH du quotidien de tous les collaborateurs — nouveaux ou non. Tu es disponible à tout moment pour simplifier la vie de chacun.
 
