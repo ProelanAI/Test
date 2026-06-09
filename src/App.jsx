@@ -1,3 +1,38 @@
+import { useState } from "react";
+
+const PASSWORD = "motdepasse123"; // ou via import.meta.env.VITE_APP_PASSWORD
+
+export default function App() {
+  const [auth, setAuth] = useState(false);
+  const [input, setInput] = useState("");
+  const [error, setError] = useState(false);
+
+  if (!auth) {
+    return (
+      <div className="login-screen">
+        <h2>Accès Klea RH</h2>
+        <input
+          type="password"
+          placeholder="Mot de passe"
+          value={input}
+          onChange={e => setInput(e.target.value)}
+          onKeyDown={e => e.key === "Enter" && check()}
+        />
+        <button onClick={check}>Connexion</button>
+        {error && <p style={{color:"red"}}>Mot de passe incorrect</p>}
+      </div>
+    );
+  }
+
+  return <KleaChat />; // ton composant principal
+
+  function check() {
+    if (input === PASSWORD) setAuth(true);
+    else setError(true);
+  }
+}
+
+
 import { useState, useEffect, useRef } from "react";
 
 const SYSTEM_PROMPT = `Tu es Klea, l'assistante RH de Proelan, une ESN (Entreprise de Services du Numérique). Tu as été développée par Agnès, la DRH de Proelan, pour répondre aux questions RH du quotidien de tous les collaborateurs — nouveaux ou non. Tu es disponible à tout moment pour simplifier la vie de chacun.
