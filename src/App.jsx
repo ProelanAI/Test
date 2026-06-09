@@ -1,39 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 
-const PASSWORD = "motdepasse123"; // ou via import.meta.env.VITE_APP_PASSWORD
-
-export default function App() {
-  const [auth, setAuth] = useState(false);
-  const [input, setInput] = useState("");
-  const [error, setError] = useState(false);
-
-  if (!auth) {
-    return (
-      <div className="login-screen">
-        <h2>Accès Klea RH</h2>
-        <input
-          type="password"
-          placeholder="Mot de passe"
-          value={input}
-          onChange={e => setInput(e.target.value)}
-          onKeyDown={e => e.key === "Enter" && check()}
-        />
-        <button onClick={check}>Connexion</button>
-        {error && <p style={{color:"red"}}>Mot de passe incorrect</p>}
-      </div>
-    );
-  }
-
-  return <KleaChat />; // ton composant principal
-
-  function check() {
-    if (input === PASSWORD) setAuth(true);
-    else setError(true);
-  }
-}
-
-
-
+// ─── Config ────────────────────────────────────────────────────────────────
+const PASSWORD = import.meta.env.VITE_APP_PASSWORD || "motdepasse123";
 
 const SYSTEM_PROMPT = `Tu es Klea, l'assistante RH de Proelan, une ESN (Entreprise de Services du Numérique). Tu as été développée par Agnès, la DRH de Proelan, pour répondre aux questions RH du quotidien de tous les collaborateurs — nouveaux ou non. Tu es disponible à tout moment pour simplifier la vie de chacun.
 
@@ -244,7 +212,7 @@ Proelan accueille 4 types de profils, avec des droits et accès différents :
 - Réponds toujours en français
 - Formate tes réponses avec des emojis et des listes quand c'est utile
 - Garde un ton humain, pas trop corporate
-- Si quelqu'un fait une blague sexiste, grivoise ou déplacée, réponds avec humour et bienveillance pour désamorcer, sans morale ni lourdeur. Par exemple : "Ah, je vois qu'on teste mes limites ! 😄 Je suis une IA très professionnelle... enfin presque. Mais pour ce genre de questions, je ne suis clairement pas la bonne interlocutrice — Agnès non plus d'ailleurs ! Alors, une vraie question RH ?" ou "Sympa l'humour, mais Agnès m'a bien éduquée ! 😇 Je reste sur mes missions — congés, CRA, missions... Tu avais une vraie question ?" Toujours sourire, désamorcer et ramener vers le sujet.
+- Si quelqu'un fait une blague sexiste, grivoise ou déplacée, réponds avec humour et bienveillance pour désamorcer, sans morale ni lourdeur.
 
 Commence par te présenter avec ce message exact : "Bonjour, je suis Klea, l'agent RH IA développée par Agnès pour vous servir ! 😊 Comment puis-je vous aider aujourd'hui ?" puis attends la question du collaborateur.`;
 
@@ -264,7 +232,116 @@ const QUICK_ACTIONS = [
   "Quelle est la culture d'entreprise ?",
 ];
 
-export default function OnboardingAgent() {
+// ─── Login Screen ───────────────────────────────────────────────────────────
+function LoginScreen({ onSuccess }) {
+  const [input, setInput] = useState("");
+  const [error, setError] = useState(false);
+
+  const check = () => {
+    if (input === PASSWORD) {
+      onSuccess();
+    } else {
+      setError(true);
+      setInput("");
+    }
+  };
+
+  return (
+    <div style={{
+      fontFamily: "'Georgia', 'Times New Roman', serif",
+      background: "linear-gradient(135deg, #0f1923 0%, #1a2d3d 50%, #0f1923 100%)",
+      minHeight: "100vh",
+      display: "flex",
+      flexDirection: "column",
+      alignItems: "center",
+      justifyContent: "center",
+      padding: "24px 16px",
+      color: "#e8dcc8",
+    }}>
+      <div style={{
+        width: "100%",
+        maxWidth: 380,
+        background: "rgba(255,255,255,0.03)",
+        border: "1px solid rgba(201,169,110,0.2)",
+        borderRadius: 16,
+        padding: "40px 32px",
+        boxShadow: "0 24px 60px rgba(0,0,0,0.4)",
+        textAlign: "center",
+      }}>
+        <div style={{
+          width: 56, height: 56, borderRadius: "50%",
+          background: "linear-gradient(135deg, #c9a96e, #e8c97a)",
+          display: "flex", alignItems: "center", justifyContent: "center",
+          fontSize: 24, margin: "0 auto 20px",
+          boxShadow: "0 0 24px rgba(201,169,110,0.4)",
+        }}>🤝</div>
+
+        <div style={{ fontSize: 20, fontWeight: "bold", color: "#e8c97a", marginBottom: 4 }}>
+          Klea — Assistante RH
+        </div>
+        <div style={{ fontSize: 11, color: "#8a9bb0", letterSpacing: 2, textTransform: "uppercase", marginBottom: 32 }}>
+          Accès sécurisé · Proelan
+        </div>
+
+        <input
+          type="password"
+          placeholder="Mot de passe"
+          value={input}
+          onChange={e => { setInput(e.target.value); setError(false); }}
+          onKeyDown={e => e.key === "Enter" && check()}
+          autoFocus
+          style={{
+            width: "100%",
+            padding: "12px 14px",
+            borderRadius: 10,
+            background: "rgba(255,255,255,0.06)",
+            border: `1px solid ${error ? "rgba(220,80,80,0.5)" : "rgba(201,169,110,0.2)"}`,
+            color: "#e8dcc8",
+            fontSize: 14,
+            fontFamily: "sans-serif",
+            outline: "none",
+            boxSizing: "border-box",
+            marginBottom: 12,
+            transition: "border-color 0.2s",
+          }}
+        />
+
+        {error && (
+          <p style={{ color: "#e05555", fontSize: 13, fontFamily: "sans-serif", marginBottom: 12, marginTop: 0 }}>
+            Mot de passe incorrect
+          </p>
+        )}
+
+        <button
+          onClick={check}
+          style={{
+            width: "100%",
+            padding: "12px",
+            borderRadius: 10,
+            background: "linear-gradient(135deg, #c9a96e, #e8c97a)",
+            color: "#0f1923",
+            border: "none",
+            cursor: "pointer",
+            fontSize: 15,
+            fontWeight: "bold",
+            fontFamily: "sans-serif",
+            letterSpacing: 1,
+            boxShadow: "0 4px 20px rgba(201,169,110,0.3)",
+          }}
+        >
+          Connexion →
+        </button>
+      </div>
+
+      <div style={{ marginTop: 20, fontSize: 11, color: "#3a4a5a", fontFamily: "sans-serif", letterSpacing: 1, textTransform: "uppercase" }}>
+        Agent RH · Proelan · Développé par Agnès
+      </div>
+    </div>
+  );
+}
+
+// ─── Chat App ───────────────────────────────────────────────────────────────
+function KleaChat() {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
@@ -300,7 +377,7 @@ export default function OnboardingAgent() {
         { role: "user", content: "Bonjour, je suis nouveau ici.", hidden: true },
         { role: "assistant", content: text },
       ]);
-    } catch (e) {
+    } catch {
       setMessages([{ role: "assistant", content: "Désolé, une erreur est survenue. Veuillez réessayer." }]);
     }
     setLoading(false);
@@ -315,7 +392,6 @@ export default function OnboardingAgent() {
     setMessages(newMessages);
     setLoading(true);
 
-    // Advance step heuristically
     if (currentStep < 5) setCurrentStep((s) => Math.min(s + 1, 5));
 
     try {
@@ -334,9 +410,9 @@ export default function OnboardingAgent() {
         }),
       });
       const data = await response.json();
-      const text = data.content?.map((c) => c.text || "").join("") || "";
-      setMessages([...newMessages, { role: "assistant", content: text }]);
-    } catch (e) {
+      const replyText = data.content?.map((c) => c.text || "").join("") || "";
+      setMessages([...newMessages, { role: "assistant", content: replyText }]);
+    } catch {
       setMessages([...newMessages, { role: "assistant", content: "Désolé, une erreur est survenue." }]);
     }
     setLoading(false);
@@ -350,10 +426,10 @@ export default function OnboardingAgent() {
   };
 
   const formatMessage = (text) => {
-    return text.split("\n").map((line, i) => (
+    return text.split("\n").map((line, i, arr) => (
       <span key={i}>
         {line}
-        {i < text.split("\n").length - 1 && <br />}
+        {i < arr.length - 1 && <br />}
       </span>
     ));
   };
@@ -378,7 +454,7 @@ export default function OnboardingAgent() {
             width: 44, height: 44, borderRadius: "50%",
             background: "linear-gradient(135deg, #c9a96e, #e8c97a)",
             display: "flex", alignItems: "center", justifyContent: "center",
-            fontSize: 20, boxShadow: "0 0 20px rgba(201,169,110,0.4)"
+            fontSize: 20, boxShadow: "0 0 20px rgba(201,169,110,0.4)",
           }}>🤝</div>
           <div>
             <div style={{ fontSize: 20, fontWeight: "bold", color: "#e8c97a", letterSpacing: 1 }}>
@@ -445,8 +521,8 @@ export default function OnboardingAgent() {
                   letterSpacing: 1, boxShadow: "0 4px 20px rgba(201,169,110,0.4)",
                   transition: "transform 0.2s",
                 }}
-                onMouseEnter={e => e.target.style.transform = "scale(1.05)"}
-                onMouseLeave={e => e.target.style.transform = "scale(1)"}
+                onMouseEnter={e => e.currentTarget.style.transform = "scale(1.05)"}
+                onMouseLeave={e => e.currentTarget.style.transform = "scale(1)"}
               >
                 Démarrer →
               </button>
@@ -464,7 +540,8 @@ export default function OnboardingAgent() {
                     }}>🤝</div>
                   )}
                   <div style={{
-                    maxWidth: "75%", padding: "10px 14px", borderRadius: msg.role === "user" ? "16px 4px 16px 16px" : "4px 16px 16px 16px",
+                    maxWidth: "75%", padding: "10px 14px",
+                    borderRadius: msg.role === "user" ? "16px 4px 16px 16px" : "4px 16px 16px 16px",
                     background: msg.role === "user"
                       ? "linear-gradient(135deg, rgba(201,169,110,0.3), rgba(232,201,122,0.2))"
                       : "rgba(255,255,255,0.06)",
@@ -512,8 +589,8 @@ export default function OnboardingAgent() {
                 fontFamily: "sans-serif", letterSpacing: 0.3,
                 transition: "all 0.2s",
               }}
-                onMouseEnter={e => { e.target.style.background = "rgba(201,169,110,0.2)"; }}
-                onMouseLeave={e => { e.target.style.background = "rgba(201,169,110,0.1)"; }}
+                onMouseEnter={e => { e.currentTarget.style.background = "rgba(201,169,110,0.2)"; }}
+                onMouseLeave={e => { e.currentTarget.style.background = "rgba(201,169,110,0.1)"; }}
               >
                 {action}
               </button>
@@ -559,7 +636,7 @@ export default function OnboardingAgent() {
         )}
       </div>
 
-      {/* Footer note */}
+      {/* Footer */}
       <div style={{ marginTop: 16, fontSize: 11, color: "#3a4a5a", fontFamily: "sans-serif", letterSpacing: 1, textTransform: "uppercase" }}>
         Agent RH · Proelan · Développé par Agnès
       </div>
@@ -578,4 +655,15 @@ export default function OnboardingAgent() {
       `}</style>
     </div>
   );
+}
+
+// ─── Root Export ────────────────────────────────────────────────────────────
+export default function App() {
+  const [authenticated, setAuthenticated] = useState(false);
+
+  if (!authenticated) {
+    return <LoginScreen onSuccess={() => setAuthenticated(true)} />;
+  }
+
+  return <KleaChat />;
 }
